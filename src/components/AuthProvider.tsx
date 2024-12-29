@@ -1,8 +1,9 @@
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { User } from '../types/user';
 import { AuthContext } from '../context/authContext';
 import { AuthApi } from '../api/auth';
 import { SignInRequest } from '../types/api/authApi';
+import { jwtDecode } from 'jwt-decode';
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -14,6 +15,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     try {
       const response = await AuthApi.signIn(dto);
 
+      localStorage.setItem('token', response.token);
       setCurrentUser({ email: dto.email, token: response.token });
     } catch {
       setCurrentUser(null);
@@ -23,13 +25,22 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   };
 
   const handleLogout = async () => {
-    try {
-      // TODO:
-      //response to back
-    } finally {
-      setCurrentUser(null);
-    }
+    localStorage.removeItem('token');
+    setCurrentUser(null);
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      const email = jwtDecode<{ email: string }>(token).email;
+
+      setCurrentUser({ email, token });
+    }
+
+    setIsLoading(false);
+  }, []);
 
   return (
     <AuthContext.Provider

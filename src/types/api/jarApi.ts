@@ -6,7 +6,11 @@ export type CreateJarRequest = {
   targetCurrencyId: number;
 };
 
-export type CreateJarResponse = Jar;
+export type CreateJarResponse = {
+  success: boolean;
+  statusCode: number;
+  data: Jar;
+};
 
 export type GetAllJarResponse = {
   success: boolean;
