@@ -1,9 +1,9 @@
-import { SignInRequest } from '../api/authApi';
+import { AuthRequest } from '../api/authApi';
 import { User } from '../user';
 
 export type AuthContext = {
   currentUser: User | null;
   isLoading: boolean;
-  handleLogin: (dto: SignInRequest) => Promise<void>;
+  handleLogin: (dto: AuthRequest) => Promise<void>;
   handleLogout: () => Promise<void>;
 };
