@@ -15,8 +15,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     try {
       const response = await AuthApi.signIn(dto);
 
-      localStorage.setItem('token', response.token);
-      setCurrentUser({ email: dto.email, token: response.token });
+      localStorage.setItem('token', response.data.token);
+      setCurrentUser({ email: dto.email, token: response.data.token });
     } catch {
       setCurrentUser(null);
     } finally {
