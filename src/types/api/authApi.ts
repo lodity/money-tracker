@@ -1,3 +1,5 @@
+import { ApiResponse } from './baseApi';
+
 export type SignInRequest = {
   email: string;
   password: string;
@@ -6,10 +8,8 @@ export type SignInRequest = {
 export type SignUpRequest = {
   email: string;
   password: string;
-  name?: string;
-  surname?: string;
 };
 
-export type AuthResponse = {
+export type AuthResponse = ApiResponse<{
   token: string;
-};
+}>;
