@@ -2,14 +2,14 @@ import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { User } from '../types/user';
 import { AuthContext } from '../context/authContext';
 import { AuthApi } from '../api/auth';
-import { SignInRequest } from '../types/api/authApi';
+import { AuthRequest } from '../types/api/authApi';
 import { jwtDecode } from 'jwt-decode';
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleLogin = async (dto: SignInRequest) => {
+  const handleLogin = async (dto: AuthRequest) => {
     setIsLoading(true);
 
     try {

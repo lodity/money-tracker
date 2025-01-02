@@ -1,11 +1,6 @@
 import { ApiResponse } from './baseApi';
 
-export type SignInRequest = {
-  email: string;
-  password: string;
-};
-
-export type SignUpRequest = {
+export type AuthRequest = {
   email: string;
   password: string;
 };
