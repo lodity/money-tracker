@@ -8,15 +8,21 @@ import {
   InputGroup,
   InputRightElement,
   VStack,
+  Text,
 } from '@chakra-ui/react';
 import { AuthRequest } from '../types/api/authApi';
 
 interface AuthFormProps {
   onSubmit: (data: AuthRequest) => void;
   mode: 'login' | 'register';
+  errorMessage: null | string;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, mode }) => {
+const AuthForm: React.FC<AuthFormProps> = ({
+  onSubmit,
+  mode,
+  errorMessage,
+}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isEmailTouched, setIsEmailTouched] = useState(false);
@@ -83,6 +89,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, mode }) => {
           {isPasswordError && (
             <FormErrorMessage>Password is required.</FormErrorMessage>
           )}
+          {errorMessage && <Text color="tomato">{errorMessage}</Text>}
         </FormControl>
         <Button
           type="submit"

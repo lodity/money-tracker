@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AuthForm from '../components/AuthForm';
 import { Heading, VStack } from '@chakra-ui/react';
 import { useAuth } from '../hooks/useAuth';
@@ -8,12 +8,22 @@ import { Link } from 'react-router-dom';
 
 export const Register = () => {
   const auth = useAuth();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<null | string>(null);
+
   const handleRegister = (data: AuthRequest) => {
-    auth.handleRegister(data).then(() => {
-      navigate('/');
-    });
+    setErrorMessage(null);
+
+    auth
+      .handleRegister(data)
+      .then(() => {
+        navigate('/');
+      })
+      .catch((e) => {
+        setErrorMessage(e.response?.data.errorMessage);
+      });
   };
+
   return (
     <VStack
       maxWidth="270px"
@@ -22,7 +32,11 @@ export const Register = () => {
       margin="0 auto"
     >
       <Heading>Register</Heading>
-      <AuthForm onSubmit={handleRegister} mode="register" />
+      <AuthForm
+        onSubmit={handleRegister}
+        mode="register"
+        errorMessage={errorMessage}
+      />
       <Link to="/signin">Login now</Link>
     </VStack>
   );
