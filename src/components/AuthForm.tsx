@@ -31,7 +31,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSubmit }) => {
     setEmail(e.target.value);
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setPassword(e.target.value);
-  const handleClick = () => setShow(!show);
+  const handleClick = () => setShow((v) => !v);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
