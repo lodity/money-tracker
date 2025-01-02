@@ -1,6 +1,5 @@
 import axios from 'axios';
 
 export const apiClient = axios.create({
-  // TODO:
-  baseURL: '/api',
+  baseURL: process.env.REACT_APP_API_URL,
 });

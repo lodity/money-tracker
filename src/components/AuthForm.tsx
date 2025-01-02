@@ -9,13 +9,14 @@ import {
   InputRightElement,
   VStack,
 } from '@chakra-ui/react';
-import { AuthApi } from '../api/auth';
+import { AuthRequest } from '../types/api/authApi';
 
 interface AuthFormProps {
-  onSubmit: (data: AuthApi) => void;
+  onSubmit: (data: AuthRequest) => void;
+  mode: 'login' | 'register';
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ onSubmit }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, mode }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isEmailTouched, setIsEmailTouched] = useState(false);
@@ -24,6 +25,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSubmit }) => {
 
   const isEmailError = email.trim() === '';
   const isPasswordError = password.trim() === '';
+
+  const buttonText = mode === 'login' ? 'Login' : 'Register';
 
   const handleBlurEmail = () => setIsEmailTouched(true);
   const handleBlurPassword = () => setIsPasswordTouched(true);
@@ -43,6 +46,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSubmit }) => {
       setIsPasswordTouched(true);
     }
   };
+
   return (
     <form onSubmit={handleSubmit}>
       <VStack>
@@ -87,7 +91,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSubmit }) => {
           w="full"
           mt="10px"
         >
-          Login
+          {buttonText}
         </Button>
       </VStack>
     </form>

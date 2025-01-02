@@ -2,15 +2,16 @@ import React from 'react';
 import AuthForm from '../components/AuthForm';
 import { Heading, VStack } from '@chakra-ui/react';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 import { AuthRequest } from '../types/api/authApi';
+import { useNavigate } from 'react-router';
 
-export const Login = () => {
+export const Register = () => {
   const auth = useAuth();
   let navigate = useNavigate();
-  const handleLogin = (data: AuthRequest) => {
-    auth.handleLogin(data).then(() => {
-      navigate('/');
+  const handleRegister = (data: AuthRequest) => {
+    auth.handleRegister(data).then((response) => {
+      //navigate('/');
+      console.log(response);
     });
   };
   return (
@@ -20,8 +21,8 @@ export const Login = () => {
       justifyContent="center"
       margin="0 auto"
     >
-      <Heading>Login</Heading>
-      <AuthForm onSubmit={handleLogin} mode="login" />
+      <Heading>Register</Heading>
+      <AuthForm onSubmit={handleRegister} mode="register" />
     </VStack>
   );
 };
