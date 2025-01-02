@@ -15,8 +15,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     try {
       const response = await AuthApi.signIn(dto);
 
-      localStorage.setItem('token', response.token);
-      setCurrentUser({ email: dto.email, token: response.token });
+      localStorage.setItem('token', response.data.data.token);
+      setCurrentUser({ email: dto.email, token: response.data.data.token });
     } catch {
       setCurrentUser(null);
     } finally {
@@ -29,10 +29,9 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
     try {
       const response = await AuthApi.signUp(dto);
-
-      localStorage.setItem('token', response.token);
-      setCurrentUser({ email: dto.email, token: response.token });
       console.log(response);
+      localStorage.setItem('token', response.data.data.token);
+      setCurrentUser({ email: dto.email, token: response.data.data.token });
     } catch {
       setCurrentUser(null);
     } finally {

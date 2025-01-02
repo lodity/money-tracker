@@ -4,14 +4,14 @@ import { Heading, VStack } from '@chakra-ui/react';
 import { useAuth } from '../hooks/useAuth';
 import { AuthRequest } from '../types/api/authApi';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 export const Register = () => {
   const auth = useAuth();
   let navigate = useNavigate();
   const handleRegister = (data: AuthRequest) => {
-    auth.handleRegister(data).then((response) => {
-      //navigate('/');
-      console.log(response);
+    auth.handleRegister(data).then(() => {
+      navigate('/');
     });
   };
   return (
@@ -23,6 +23,7 @@ export const Register = () => {
     >
       <Heading>Register</Heading>
       <AuthForm onSubmit={handleRegister} mode="register" />
+      <Link to="/signin">Login now</Link>
     </VStack>
   );
 };

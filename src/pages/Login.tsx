@@ -2,7 +2,7 @@ import React from 'react';
 import AuthForm from '../components/AuthForm';
 import { Heading, VStack } from '@chakra-ui/react';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthRequest } from '../types/api/authApi';
 
 export const Login = () => {
@@ -22,6 +22,7 @@ export const Login = () => {
     >
       <Heading>Login</Heading>
       <AuthForm onSubmit={handleLogin} mode="login" />
+      <Link to="/signup">Register now</Link>
     </VStack>
   );
 };
