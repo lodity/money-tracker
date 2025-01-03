@@ -15,10 +15,26 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     try {
       const response = await AuthApi.signIn(dto);
 
-      localStorage.setItem('token', response.data.token);
-      setCurrentUser({ email: dto.email, token: response.data.token });
-    } catch {
+      localStorage.setItem('token', response.data.data.token);
+      setCurrentUser({ email: dto.email, token: response.data.data.token });
+    } catch (e) {
       setCurrentUser(null);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegister = async (dto: AuthRequest) => {
+    setIsLoading(true);
+
+    try {
+      const response = await AuthApi.signUp(dto);
+      localStorage.setItem('token', response.data.data.token);
+      setCurrentUser({ email: dto.email, token: response.data.data.token });
+    } catch (e) {
+      setCurrentUser(null);
+      throw e;
     } finally {
       setIsLoading(false);
     }
@@ -49,6 +65,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         isLoading,
         handleLogin,
         handleLogout,
+        handleRegister,
       }}
     >
       {children}

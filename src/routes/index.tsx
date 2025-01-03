@@ -4,6 +4,7 @@ import React from 'react';
 import { HomePage } from '../pages/HomePage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { Login } from '../pages/Login';
+import { Register } from '../pages/Register';
 
 export const router = createBrowserRouter([
   {
@@ -22,5 +23,9 @@ export const router = createBrowserRouter([
   {
     path: '/signin',
     element: <Login />,
+  },
+  {
+    path: '/signup',
+    element: <Register />,
   },
 ]);

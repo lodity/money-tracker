@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 import AuthForm from '../components/AuthForm';
 import { Heading, VStack } from '@chakra-ui/react';
 import { useAuth } from '../hooks/useAuth';
-import { Link, useNavigate } from 'react-router-dom';
 import { AuthRequest } from '../types/api/authApi';
+import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
-export const Login = () => {
+export const Register = () => {
   const auth = useAuth();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
-  const handleLogin = (data: AuthRequest) => {
+  const handleRegister = (data: AuthRequest) => {
     setErrorMessage(null);
 
     auth
-      .handleLogin(data)
+      .handleRegister(data)
       .then(() => {
         navigate('/');
       })
@@ -30,13 +31,13 @@ export const Login = () => {
       justifyContent="center"
       margin="0 auto"
     >
-      <Heading>Login</Heading>
+      <Heading>Register</Heading>
       <AuthForm
-        onSubmit={handleLogin}
-        mode="login"
+        onSubmit={handleRegister}
+        mode="register"
         errorMessage={errorMessage}
       />
-      <Link to="/signup">Register now</Link>
+      <Link to="/signin">Login now</Link>
     </VStack>
   );
 };
