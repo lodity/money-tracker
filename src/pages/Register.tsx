@@ -37,7 +37,7 @@ export const Register = () => {
         mode="register"
         errorMessage={errorMessage}
       />
-      <Link to="/signin">Login now</Link>
+      <Link to="/sign-in">Login now</Link>
     </VStack>
   );
 };

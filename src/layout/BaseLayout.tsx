@@ -11,7 +11,6 @@ export default function BaseLayout() {
             <Outlet />
           </div>
         </main>
-        <footer>Footer</footer>
       </div>
     </>
   );

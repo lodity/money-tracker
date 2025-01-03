@@ -4,5 +4,5 @@ export type Jar = {
   balance: number;
   progress: number;
   target: number;
-  currency: string;
+  targetCurrency: string;
 };
