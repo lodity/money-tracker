@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -18,11 +18,7 @@ interface AuthFormProps {
   errorMessage: null | string;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({
-  onSubmit,
-  mode,
-  errorMessage,
-}) => {
+const AuthForm: FC<AuthFormProps> = ({ onSubmit, mode, errorMessage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isEmailTouched, setIsEmailTouched] = useState(false);

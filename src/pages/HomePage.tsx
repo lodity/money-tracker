@@ -15,16 +15,11 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { CreateJarRequest } from '../types/api/jarApi';
+import CreateJarForm from '../components/CreateJarForm';
 
 export const HomePage = () => {
   const [jars, setJars] = useState<Jar[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [createJar, setCreateJar] = useState<CreateJarRequest>({
-    name: '',
-    target: 0,
-    targetCurrencyId: 0,
-  });
 
   const { currentUser } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,33 +44,21 @@ export const HomePage = () => {
       });
   }, [currentUser]);
 
-  const handleCreateJar = async () => {
-    JarApi.create(createJar)
-      .then((res) => {
-        console.log(res);
-        setJars((v) => [...v, res.data.data]);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Create jar</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form onSubmit={handleCreateJar}></form>
+            <CreateJarForm
+              onJarCreated={(newJar) =>
+                setJars((prevJars) => [...prevJars, newJar])
+              }
+              onClose={onClose}
+            />
           </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button colorScheme="blue">Create</Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
       <div>
