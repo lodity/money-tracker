@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleLogin = async (dto: AuthRequest) => {
     setIsLoading(true);

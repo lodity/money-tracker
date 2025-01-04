@@ -5,6 +5,7 @@ import { HomePage } from '../pages/HomePage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { Login } from '../pages/Login';
 import { Register } from '../pages/Register';
+import { NotFoundPage } from '../pages/NotFoundPage';
 
 export const router = createBrowserRouter([
   {
@@ -21,11 +22,15 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: '/signin',
+    path: '/sign-in',
     element: <Login />,
   },
   {
-    path: '/signup',
+    path: '/sign-up',
     element: <Register />,
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ]);

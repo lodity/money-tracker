@@ -15,7 +15,7 @@ export class JarApi {
     );
   }
 
-  static async getAll() {
+  static async getAll(token: string) {
     return await apiClient.get<void, GetAllJarResponse>(`v1/jars`);
   }
 

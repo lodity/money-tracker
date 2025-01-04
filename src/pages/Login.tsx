@@ -36,7 +36,7 @@ export const Login = () => {
         mode="login"
         errorMessage={errorMessage}
       />
-      <Link to="/signup">Register now</Link>
+      <Link to="/sign-up">Register now</Link>
     </VStack>
   );
 };
