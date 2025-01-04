@@ -1,5 +1,9 @@
 export type Currency = {
-  id: number;
   name: string;
   rate: number;
+};
+
+export type CurrencyBalance = {
+  currency: string;
+  balance: number;
 };
