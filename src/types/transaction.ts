@@ -8,6 +8,6 @@ export type Transaction = {
   amount: number;
   currency: string;
   type: TransactionType;
-  comment?: string;
+  comment: string;
   createdAt: string;
 };
