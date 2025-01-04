@@ -16,11 +16,7 @@ export class JarApi {
   }
 
   static async getAll(token: string) {
-    return await apiClient.get<void, GetAllJarResponse>(`v1/jars`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    return await apiClient.get<void, GetAllJarResponse>(`v1/jars`);
   }
 
   static async getById(id: number) {
