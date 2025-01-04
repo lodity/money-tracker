@@ -11,9 +11,7 @@ export class JarApi {
   static async create(dto: CreateJarRequest) {
     return await apiClient.post<CreateJarRequest, CreateJarResponse>(
       `v1/jars`,
-      {
-        ...dto,
-      },
+      dto,
     );
   }
 
@@ -28,9 +26,7 @@ export class JarApi {
   static async update(id: number, dto: UpdateJarRequest) {
     return await apiClient.patch<UpdateJarRequest, DetailedJarResponse>(
       `v1/jars/${id}`,
-      {
-        ...dto,
-      },
+      dto,
     );
   }
 

@@ -5,9 +5,7 @@ export class StoreApi {
   static async create(dto: CreateStoreRequest) {
     return await apiClient.post<CreateStoreRequest, CreateStoreResponse>(
       `v1/stores`,
-      {
-        ...dto,
-      },
+      dto,
     );
   }
 }

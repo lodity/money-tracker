@@ -8,9 +8,7 @@ export class TransactionApi {
   static async create(dto: CreateTransaction) {
     return await apiClient.post<CreateTransaction, CreateTransactionResponse>(
       `v1/stores`,
-      {
-        ...dto,
-      },
+      dto,
     );
   }
 }
