@@ -16,7 +16,7 @@ export const Login = () => {
     auth
       .handleLogin(data)
       .then(() => {
-        navigate('/');
+        navigate('/jars');
       })
       .catch((e) => {
         setErrorMessage(e.response?.data.errorMessage);

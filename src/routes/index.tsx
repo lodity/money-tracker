@@ -6,16 +6,25 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import { Login } from '../pages/Login';
 import { Register } from '../pages/Register';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { JarPage } from '../pages/JarPage';
 
 export const router = createBrowserRouter([
   {
     element: <BaseLayout />,
     children: [
       {
-        path: '/',
+        path: '/jars',
         element: (
           <ProtectedRoute>
             <HomePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/jars/:id',
+        element: (
+          <ProtectedRoute>
+            <JarPage />
           </ProtectedRoute>
         ),
       },
