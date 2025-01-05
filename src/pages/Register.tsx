@@ -17,7 +17,7 @@ export const Register = () => {
     auth
       .handleRegister(data)
       .then(() => {
-        navigate('/');
+        navigate('/jars');
       })
       .catch((e) => {
         setErrorMessage(e.response?.data.errorMessage);

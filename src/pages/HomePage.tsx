@@ -4,18 +4,22 @@ import { useAuth } from '../hooks/useAuth';
 import { Jar } from '../types/jar';
 import {
   Button,
+  Card,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
+  Image,
   ModalHeader,
   ModalOverlay,
-  Text,
   useDisclosure,
   VStack,
+  AbsoluteCenter,
+  Spinner,
 } from '@chakra-ui/react';
 import CreateJarForm from '../components/CreateJarForm';
+import { Link } from 'react-router-dom';
+import { JarInfo } from '../components/JarInfo';
 
 export const HomePage = () => {
   const [jars, setJars] = useState<Jar[]>([]);
@@ -61,28 +65,25 @@ export const HomePage = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <div>
-        <Button onClick={onOpen}>Create jar</Button>
-        <h1>Jars:</h1>
-        {jars.map((jar) => (
-          <VStack
-            key={jar.id}
-            w="fit-content"
-            p="2"
-            borderWidth="1px"
-            borderColor="gray"
-          >
-            <Text>Name: {jar.name}</Text>
-            <Text>
-              Target: {jar.target} {jar.targetCurrency}
-            </Text>
-            <Text>
-              Balance: {jar.balance} {jar.targetCurrency}
-            </Text>
-            <Text>Progress: {jar.balance / jar.target} %</Text>
-          </VStack>
-        ))}
-      </div>
+      <VStack w="80%" minW="300px" mx="auto" gap="4" maxW="700px">
+        <Button onClick={onOpen} size="lg">
+          Create jar
+        </Button>
+        {isLoading ? (
+          <AbsoluteCenter mt="50vh">
+            <Spinner size="xl" />
+          </AbsoluteCenter>
+        ) : (
+          jars.map((jar) => (
+            <Link to={`/jars/${jar.id}`} style={{ width: '100%' }} key={jar.id}>
+              <Card flexDir="row">
+                <Image src="/jar.png" alt="Jar" maxW="140px" />
+                <JarInfo jar={jar} />
+              </Card>
+            </Link>
+          ))
+        )}
+      </VStack>
     </>
   );
 };
