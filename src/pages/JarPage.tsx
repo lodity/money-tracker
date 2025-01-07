@@ -15,18 +15,26 @@ import {
   HStack,
   Image,
   Spinner,
+  Table,
   Tag,
+  Tbody,
+  Td,
   Text,
+  Tr,
   useBreakpointValue,
   VStack,
   Wrap,
 } from '@chakra-ui/react';
 import { JarInfo } from '../components/JarInfo';
+import { Transaction, TransactionType } from '../types/transaction';
+import { TransactionApi } from '../api/transaction';
+import { formatIso } from '../utils';
 
 export const JarPage = () => {
   const { id } = useParams();
   const [jar, setJar] = useState<DetailedJar | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const cardWidth = useBreakpointValue({
     base: '95%',
     md: '80%',
@@ -47,6 +55,10 @@ export const JarPage = () => {
     JarApi.getById(Number(id)).then((response) => {
       setJar(response.data.data);
       setIsLoading(false);
+    });
+
+    TransactionApi.get(10, 0).then((response) => {
+      setTransactions(response.data.data.transactions);
     });
   }, [id]);
 
@@ -135,7 +147,22 @@ export const JarPage = () => {
             <Heading fontSize="3xl" mb="4">
               Transactions:
             </Heading>
-            ToDo
+            <Box overflowX="auto">
+              <Table w="full" maxW="full">
+                <Tbody>
+                  {transactions.map((transaction) => (
+                    <Tr key={transaction.id}>
+                      <Td>
+                        {transaction.type == TransactionType.Inflow ? '+' : '-'}
+                        {transaction.amount} {transaction.currency}
+                      </Td>
+                      <Td>{transaction.comment}</Td>
+                      <Td isNumeric>{formatIso(transaction.createdAt)}</Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
           </CardBody>
         </Card>
       </Flex>

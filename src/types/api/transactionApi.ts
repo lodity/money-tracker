@@ -10,3 +10,6 @@ export type CreateTransaction = {
 };
 
 export type CreateTransactionResponse = ApiResponse<Transaction>;
+export type GetTransactionResponse = ApiResponse<{
+  transactions: Transaction[];
+}>;
