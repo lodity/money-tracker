@@ -52,7 +52,7 @@ export const JarPage = () => {
     }
 
     JarApi.delete(Number(id))
-      .then((response) => {
+      .then(() => {
         navigate('/jars');
       })
       .catch((e) => {
