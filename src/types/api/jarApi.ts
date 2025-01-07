@@ -7,12 +7,8 @@ export type CreateJarRequest = {
   targetCurrency: string;
 };
 
-export type UpdateJarRequest = {
-  name?: string;
-  target?: number;
-  targetCurrency?: string;
-};
+export type UpdateJarRequest = CreateJarRequest;
 
-export type CreateJarResponse = ApiResponse<Jar>;
+export type CreateJarResponse = ApiResponse<DetailedJar>;
 export type GetAllJarResponse = ApiResponse<Jar[]>;
 export type DetailedJarResponse = ApiResponse<DetailedJar>;

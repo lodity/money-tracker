@@ -16,12 +16,13 @@ import {
   VStack,
   AbsoluteCenter,
   Spinner,
+  Grid,
 } from '@chakra-ui/react';
-import CreateJarForm from '../components/CreateJarForm';
+import JarForm from '../components/JarForm';
 import { Link } from 'react-router-dom';
 import { JarInfo } from '../components/JarInfo';
 
-export const HomePage = () => {
+export const JarListPage = () => {
   const [jars, setJars] = useState<Jar[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -56,8 +57,8 @@ export const HomePage = () => {
           <ModalHeader>Create jar</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <CreateJarForm
-              onJarCreated={(newJar) =>
+            <JarForm
+              onCompleted={(newJar) =>
                 setJars((prevJars) => [...prevJars, newJar])
               }
               onClose={onClose}
@@ -65,24 +66,32 @@ export const HomePage = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <VStack w="80%" minW="300px" mx="auto" gap="4" maxW="700px">
+      <VStack>
         <Button onClick={onOpen} size="lg">
           Create jar
         </Button>
-        {isLoading ? (
-          <AbsoluteCenter mt="50vh">
-            <Spinner size="xl" />
-          </AbsoluteCenter>
-        ) : (
-          jars.map((jar) => (
-            <Link to={`/jars/${jar.id}`} style={{ width: '100%' }} key={jar.id}>
-              <Card flexDir="row">
-                <Image src="/jar.png" alt="Jar" maxW="140px" />
-                <JarInfo jar={jar} />
-              </Card>
-            </Link>
-          ))
-        )}
+        <Grid
+          minW="300px"
+          mx="auto"
+          gap="4"
+          maxW="700px"
+          templateColumns="repeat(2, 1fr)"
+        >
+          {isLoading ? (
+            <AbsoluteCenter mt="50vh">
+              <Spinner size="xl" />
+            </AbsoluteCenter>
+          ) : (
+            jars.map((jar) => (
+              <Link to={`/jars/${jar.id}`} key={jar.id}>
+                <Card flexDir="row">
+                  <Image src="/jar.png" alt="Jar" maxW="140px" />
+                  <JarInfo jar={jar} />
+                </Card>
+              </Link>
+            ))
+          )}
+        </Grid>
       </VStack>
     </>
   );
