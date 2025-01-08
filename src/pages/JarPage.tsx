@@ -57,7 +57,7 @@ export const JarPage = () => {
       setIsLoading(false);
     });
 
-    TransactionApi.get(10, 0).then((response) => {
+    TransactionApi.get(10, 0, Number(id)).then((response) => {
       setTransactions(response.data.data.transactions);
     });
   }, [id]);

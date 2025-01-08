@@ -12,9 +12,9 @@ export class TransactionApi {
       dto,
     );
   }
-  static async get(limit: number, offset: number, storeId?: number) {
+  static async get(limit: number, offset: number, jarId?: number) {
     return await apiClient.get<void, GetTransactionResponse>(
-      `v1/transactions?limit=${limit}&offset=${offset}${storeId != null ? `&storeId=${storeId}` : ''}`,
+      `v1/transactions?limit=${limit}&offset=${offset}${jarId != null ? `&jarId=${jarId}` : ''}`,
     );
   }
 }
