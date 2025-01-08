@@ -10,16 +10,17 @@ import React, { FC, useEffect, useState } from 'react';
 import { JarApi } from '../api/jar';
 import { CreateJarRequest } from '../types/api/jarApi';
 import SelectMenu from './UI/SelectMenu';
-import { Jar } from '../types/jar';
+import { DetailedJar, Jar } from '../types/jar';
 import { CurrencyApi } from '../api/currency';
 
-interface CreateJarFormProps {
-  onJarCreated: (jar: Jar) => void;
+interface JarFormProps {
+  onCompleted: (jar: DetailedJar) => void;
+  editData?: Jar;
   onClose: () => void;
 }
 
-const CreateJarForm: FC<CreateJarFormProps> = ({ onJarCreated, onClose }) => {
-  const [createJar, setCreateJar] = useState<CreateJarRequest>({
+const JarForm: FC<JarFormProps> = ({ onCompleted, onClose, editData }) => {
+  const [jar, setJar] = useState<CreateJarRequest>({
     name: '',
     target: 0,
     targetCurrency: '',
@@ -30,36 +31,49 @@ const CreateJarForm: FC<CreateJarFormProps> = ({ onJarCreated, onClose }) => {
   const [options, setOptions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const isNameError = createJar.name.trim() === '';
-  const isTargetError = createJar.target <= 0 || Number.isNaN(createJar.target);
+  const isNameError = jar.name.trim() === '';
+  const isTargetError = jar.target <= 0 || Number.isNaN(jar.target);
 
   const handleBlurName = () => setIsNameTouched(true);
   const handleBlurTarget = () => setIsTargetTouched(true);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setCreateJar((prev) => ({
+    setJar((prev) => ({
       ...prev,
       name: e.target.value,
     }));
+
   const handleTargetChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setCreateJar((prev) => ({
+    setJar((prev) => ({
       ...prev,
       target: e.target.valueAsNumber,
     }));
 
   const handleTargetCurrencyChange = (currency: string | null) =>
-    setCreateJar((prev) => ({
+    setJar((prev) => ({
       ...prev,
       targetCurrency: currency ?? '',
     }));
 
   const handleCreateJar = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newJar: CreateJarRequest = { ...createJar };
 
     try {
-      const res = await JarApi.create(newJar);
-      onJarCreated(res.data.data);
+      const res = await JarApi.create(jar);
+      onCompleted(res.data.data);
+      onClose();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEditJar = async (e: React.FormEvent) => {
+    if (!editData) return;
+    e.preventDefault();
+
+    try {
+      const res = await JarApi.update(editData.id, jar);
+      onCompleted(res.data.data);
       onClose();
     } catch (error) {
       console.error(error);
@@ -80,14 +94,24 @@ const CreateJarForm: FC<CreateJarFormProps> = ({ onJarCreated, onClose }) => {
     fetchOptions();
   }, []);
 
+  useEffect(() => {
+    if (!editData) return;
+
+    setJar({
+      name: editData.name,
+      target: editData.target,
+      targetCurrency: editData.targetCurrency,
+    });
+  }, [editData]);
+
   return (
-    <form onSubmit={handleCreateJar}>
+    <form onSubmit={editData ? handleEditJar : handleCreateJar}>
       <VStack>
         <FormControl isInvalid={isNameError && isNameTouched}>
           <FormLabel>Name:</FormLabel>
           <Input
             type="text"
-            value={createJar.name}
+            value={jar.name}
             placeholder="Enter name"
             onChange={handleNameChange}
             onBlur={handleBlurName}
@@ -100,7 +124,7 @@ const CreateJarForm: FC<CreateJarFormProps> = ({ onJarCreated, onClose }) => {
           <FormLabel>Target:</FormLabel>
           <Input
             type="number"
-            value={createJar.target}
+            value={jar.target}
             placeholder="Enter target"
             onChange={handleTargetChange}
             onBlur={handleBlurTarget}
@@ -113,7 +137,7 @@ const CreateJarForm: FC<CreateJarFormProps> = ({ onJarCreated, onClose }) => {
           <FormLabel>Currency:</FormLabel>
           <SelectMenu
             options={options}
-            selectedOption={createJar.targetCurrency}
+            selectedOption={jar.targetCurrency}
             setSelectedOption={handleTargetCurrencyChange}
           />
         </FormControl>
@@ -126,11 +150,11 @@ const CreateJarForm: FC<CreateJarFormProps> = ({ onJarCreated, onClose }) => {
           mb="8px"
           ml="auto"
         >
-          Create
+          {editData ? 'Update' : 'Create'}
         </Button>
       </VStack>
     </form>
   );
 };
 
-export default CreateJarForm;
+export default JarForm;
