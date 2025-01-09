@@ -32,6 +32,8 @@ import {
 import { JarInfo } from '../components/JarInfo';
 import CreateStoreForm from '../components/CreateStoreForm';
 import CreateTransactionForm from '../components/CreateTransactionForm';
+import JarForm from '../components/JarForm';
+import { useNavigate } from 'react-router';
 
 export const JarPage = () => {
   const { id } = useParams();
@@ -45,27 +47,48 @@ export const JarPage = () => {
     onOpen: onOpenAddTransaction,
     onClose: onCloseAddTransaction,
   } = useDisclosure();
-  const cardWidth = useBreakpointValue({
-    base: '95%',
-    md: '80%',
-    lg: '60%',
-  });
 
   const orientation = useBreakpointValue<'column' | 'row'>({
     base: 'column',
     md: 'row',
     lg: 'row',
   });
+  const cardWidth = useBreakpointValue({
+    base: '95%',
+    md: '80%',
+    lg: '60%',
+  });
+  const navigate = useNavigate();
+
+  const handleDelete = () => {
+    if (!id) {
+      return;
+    }
+
+    JarApi.delete(Number(id))
+      .then(() => {
+        navigate('/jars');
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
   useEffect(() => {
     if (!id) {
       return;
     }
 
-    JarApi.getById(Number(id)).then((response) => {
-      setJar(response.data.data);
-      setIsLoading(false);
-    });
+    JarApi.getById(Number(id))
+      .then((response) => {
+        setJar(response.data.data);
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [id, updateCounter]);
 
   if (isLoading || !jar) {
@@ -78,6 +101,20 @@ export const JarPage = () => {
 
   return (
     <>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit jar</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <JarForm
+              editData={jar}
+              onCompleted={(newJar) => setJar(newJar)}
+              onClose={onClose}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -129,6 +166,12 @@ export const JarPage = () => {
         </Breadcrumb>
         <Card w="full">
           <CardBody>
+            <HStack justifyContent="flex-end" w="full">
+              <Button onClick={onOpen}>Edit</Button>
+              <Button onClick={handleDelete} colorScheme="red">
+                Delete
+              </Button>
+            </HStack>
             <HStack align="start">
               <Image src="/jar.png" alt="Jar" maxW="200px" />
               <JarInfo jar={jar} />
@@ -162,7 +205,7 @@ export const JarPage = () => {
                 <Button colorScheme="orange" h="35px" onClick={onOpen}>
                   Add
                 </Button>
-              </HStack>
+              </HStack>{' '}
               <VStack align="start">
                 {jar.stores.map((store) => (
                   <Box key={store.id}>
@@ -171,19 +214,19 @@ export const JarPage = () => {
                       <Text as="span" fontWeight="500" color="teal.400">
                         ({store.balance} {jar.targetCurrency})
                       </Text>
-                      <Button
-                        fontSize="3xl"
-                        lineHeight="1"
-                        h="30px"
-                        w="30px"
-                        onClick={() => {
-                          setActiveStoreId(store.id);
-                          onOpenAddTransaction();
-                        }}
-                      >
-                        +
-                      </Button>
                     </Heading>
+                    <Button
+                      fontSize="3xl"
+                      lineHeight="1"
+                      h="30px"
+                      w="30px"
+                      onClick={() => {
+                        setActiveStoreId(store.id);
+                        onOpenAddTransaction();
+                      }}
+                    >
+                      +
+                    </Button>
                     <VStack align="start" p="2">
                       {store.balances.map((currency) => (
                         <Tag
@@ -201,7 +244,7 @@ export const JarPage = () => {
                   </Box>
                 ))}
               </VStack>
-              {jar.stores.length == 0 && <Text fontSize="xl">Empty</Text>}
+              {jar.stores.length === 0 && <Text fontSize="xl">Empty</Text>}
             </CardBody>
           </Card>
           <Card w="full">

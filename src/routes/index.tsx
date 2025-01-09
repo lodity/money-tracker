@@ -1,7 +1,7 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import BaseLayout from '../layout/BaseLayout';
 import React from 'react';
-import { HomePage } from '../pages/HomePage';
+import { JarListPage } from '../pages/JarListPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { Login } from '../pages/Login';
 import { Register } from '../pages/Register';
@@ -17,10 +17,14 @@ export const router = createBrowserRouter([
     element: <BaseLayout />,
     children: [
       {
+        path: '/',
+        element: <Navigate to="/jars" replace />,
+      },
+      {
         path: '/jars',
         element: (
           <ProtectedRoute>
-            <HomePage />
+            <JarListPage />
           </ProtectedRoute>
         ),
       },
