@@ -9,9 +9,9 @@ interface JarInfoProps {
 export const JarInfo: FC<JarInfoProps> = ({ jar }) => {
   return (
     <VStack justifyContent="space-between" w="full" p="4" gap="4" align="start">
-      <Heading>
+      <Heading fontSize="2xl">
         {jar.name}{' '}
-        <Text as="span" fontSize="2xl" fontWeight="500" color="teal.400">
+        <Text fontSize="xl" fontWeight="500" color="teal.400">
           ({jar.balance} / {jar.target} {jar.targetCurrency})
         </Text>
       </Heading>
