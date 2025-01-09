@@ -81,7 +81,7 @@ export const JarPage = () => {
   };
 
   useEffect(() => {
-    if (!currentUser?.token) {
+    if (!currentUser?.token || !id) {
       return;
     }
 
