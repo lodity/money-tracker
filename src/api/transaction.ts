@@ -14,7 +14,7 @@ export class TransactionApi {
   }
   static async get(limit: number, offset: number, jarId?: number) {
     return await apiClient.get<void, GetTransactionResponse>(
-      `v1/transactions?limit=${limit}&offset=${offset}${jarId != null ? `&jarId=${jarId}` : ''}`,
+      `v1/transactions?limit=${limit}&offset=${offset}${jarId !== null && jarId !== undefined ? `&jarId=${jarId}` : ''}`,
     );
   }
 }
