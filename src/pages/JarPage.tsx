@@ -40,6 +40,7 @@ export const JarPage = () => {
   const [jar, setJar] = useState<DetailedJar | null>(null);
   const [activeStoreId, setActiveStoreId] = useState(0);
   const [updateCounter, setUpdateCounter] = useState(0);
+  const [activeStoreBalance, setActiveStoreBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -59,6 +60,10 @@ export const JarPage = () => {
     lg: '60%',
   });
   const navigate = useNavigate();
+
+  const handleTransactionCreated = () => {
+    setUpdateCounter((prev) => prev + 1);
+  };
 
   const handleDelete = () => {
     if (!id) {
@@ -124,8 +129,7 @@ export const JarPage = () => {
             <CreateStoreForm
               onStoreCreated={(newStore) =>
                 setJar((prev) => {
-                  console.error('Jar state is null or undefined.');
-                  if (!prev) return prev; // Перевірка, чи `prev` не є `null`
+                  if (!prev) return prev;
 
                   return {
                     ...prev,
@@ -146,9 +150,8 @@ export const JarPage = () => {
           <ModalCloseButton />
           <ModalBody>
             <CreateTransactionForm
-              onTransactionCreated={() => {
-                setUpdateCounter((prev) => prev + 1);
-              }}
+              onTransactionCreated={handleTransactionCreated}
+              storeBalance={activeStoreBalance}
               storeId={activeStoreId}
               onClose={onClose}
             />
@@ -216,16 +219,19 @@ export const JarPage = () => {
                       </Text>
                     </Heading>
                     <Button
-                      fontSize="3xl"
-                      lineHeight="1"
                       h="30px"
-                      w="30px"
                       onClick={() => {
                         setActiveStoreId(store.id);
+                        setActiveStoreBalance(
+                          store.balances.reduce(
+                            (acc, curr) => acc + curr.balance,
+                            0,
+                          ),
+                        );
                         onOpenAddTransaction();
                       }}
                     >
-                      +
+                      In/Out
                     </Button>
                     <VStack align="start" p="2">
                       {store.balances.map((currency) => (

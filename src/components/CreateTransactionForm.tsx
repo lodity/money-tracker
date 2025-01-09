@@ -3,6 +3,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
   Input,
   VStack,
 } from '@chakra-ui/react';
@@ -15,12 +16,14 @@ import { TransactionApi } from '../api/transaction';
 
 interface CreateTransactionFormProps {
   onTransactionCreated: (transaction: Transaction) => void;
+  storeBalance: number;
   storeId: number;
   onClose: () => void;
 }
 
 const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
   onTransactionCreated,
+  storeBalance,
   storeId,
   onClose,
 }) => {
@@ -39,7 +42,10 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const isAmountError =
-    createTransaction.amount <= 0 || Number.isNaN(createTransaction.amount);
+    createTransaction.amount <= 0 ||
+    Number.isNaN(createTransaction.amount) ||
+    (createTransaction.type === TransactionType.Outflow &&
+      createTransaction.amount > storeBalance);
 
   const handleBlurAmount = () => setIsAmountTouched(true);
 
@@ -61,9 +67,23 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
       currency: currency ?? '',
     }));
 
-  const handleCreateTransaction = async (e: React.FormEvent) => {
+  const handleCreateTransaction = async (
+    e: React.FormEvent,
+    transactionType: TransactionType,
+  ) => {
     e.preventDefault();
-    const newTransaction: CreateTransaction = { ...createTransaction };
+    const newTransaction: CreateTransaction = {
+      ...createTransaction,
+      type: transactionType,
+    };
+
+    if (
+      transactionType === TransactionType.Outflow &&
+      newTransaction.amount > storeBalance
+    ) {
+      setError('Insufficient funds for this transaction.');
+      return;
+    }
 
     try {
       const res = await TransactionApi.create(newTransaction);
@@ -89,7 +109,7 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
   }, []);
 
   return (
-    <form onSubmit={handleCreateTransaction}>
+    <form>
       <VStack>
         <FormControl isInvalid={isAmountError && isAmountTouched}>
           <FormLabel>Amount:</FormLabel>
@@ -101,7 +121,12 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
             onBlur={handleBlurAmount}
           />
           {isAmountError && (
-            <FormErrorMessage>Amount is required.</FormErrorMessage>
+            <FormErrorMessage>
+              {createTransaction.type === TransactionType.Outflow &&
+              createTransaction.amount > storeBalance
+                ? 'Insufficient funds.'
+                : 'Amount is required.'}
+            </FormErrorMessage>
           )}
         </FormControl>
         <SelectMenu
@@ -118,17 +143,33 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
             onChange={handleCommentChange}
           />
         </FormControl>
-        <Button
-          type="submit"
-          display="block"
-          colorScheme="blue"
-          w="100px"
-          mt="10px"
-          mb="8px"
-          ml="auto"
-        >
-          Create
-        </Button>
+        <HStack>
+          <Button
+            onClick={(e) => handleCreateTransaction(e, TransactionType.Outflow)}
+            type="submit"
+            display="block"
+            colorScheme="red"
+            w="100px"
+            mt="10px"
+            mb="8px"
+            ml="auto"
+            background="red.400"
+          >
+            Outflow
+          </Button>
+          <Button
+            onClick={(e) => handleCreateTransaction(e, TransactionType.Inflow)}
+            type="submit"
+            display="block"
+            colorScheme="blue"
+            w="100px"
+            mt="10px"
+            mb="8px"
+            ml="auto"
+          >
+            Inflow
+          </Button>
+        </HStack>
       </VStack>
     </form>
   );
