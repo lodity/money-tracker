@@ -1,5 +1,5 @@
 import { Transaction, TransactionType } from '../transaction';
-import { ApiResponse } from './baseApi';
+import { ApiResponse, PaginatedApiResponse } from './baseApi';
 
 export type CreateTransaction = {
   amount: number;
@@ -10,3 +10,8 @@ export type CreateTransaction = {
 };
 
 export type CreateTransactionResponse = ApiResponse<Transaction>;
+export type GetTransactionResponse = ApiResponse<
+  {
+    transactions: Transaction[];
+  } & PaginatedApiResponse
+>;

@@ -2,6 +2,7 @@ import { apiClient } from '../client/apiClient';
 import {
   CreateTransaction,
   CreateTransactionResponse,
+  GetTransactionResponse,
 } from '../types/api/transactionApi';
 
 export class TransactionApi {
@@ -9,6 +10,11 @@ export class TransactionApi {
     return await apiClient.post<CreateTransaction, CreateTransactionResponse>(
       `v1/transactions`,
       dto,
+    );
+  }
+  static async get(limit: number, offset: number, jarId?: number) {
+    return await apiClient.get<void, GetTransactionResponse>(
+      `v1/transactions?limit=${limit}&offset=${offset}${jarId !== undefined ? `&jarId=${jarId}` : ''}`,
     );
   }
 }

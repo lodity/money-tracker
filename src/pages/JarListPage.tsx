@@ -17,6 +17,7 @@ import {
   AbsoluteCenter,
   Spinner,
   Grid,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import JarForm from '../components/JarForm';
 import { Link } from 'react-router-dom';
@@ -28,6 +29,12 @@ export const JarListPage = () => {
 
   const { currentUser } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const grid = useBreakpointValue({
+    base: 'repeat(1, 1fr)',
+    md: 'repeat(2, 1fr)',
+    lg: 'repeat(2, 1fr)',
+  });
 
   useEffect(() => {
     if (!currentUser) {
@@ -70,22 +77,21 @@ export const JarListPage = () => {
         <Button onClick={onOpen} size="lg">
           Create jar
         </Button>
-        <Grid
-          minW="300px"
-          mx="auto"
-          gap="4"
-          maxW="700px"
-          templateColumns="repeat(2, 1fr)"
-        >
+        <Grid minW="300px" mx="auto" gap="4" maxW="95%" templateColumns={grid}>
           {isLoading ? (
-            <AbsoluteCenter mt="50vh">
+            <AbsoluteCenter>
               <Spinner size="xl" />
             </AbsoluteCenter>
           ) : (
             jars.map((jar) => (
               <Link to={`/jars/${jar.id}`} key={jar.id}>
-                <Card flexDir="row">
-                  <Image src="/jar.png" alt="Jar" maxW="140px" />
+                <Card flexDir="row" minH="40">
+                  <Image
+                    src="/jar.png"
+                    alt="Jar"
+                    maxW="140px"
+                    objectFit="contain"
+                  />
                   <JarInfo jar={jar} />
                 </Card>
               </Link>

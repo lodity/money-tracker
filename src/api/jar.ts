@@ -21,8 +21,10 @@ export class JarApi {
     });
   }
 
-  static async getById(id: number) {
-    return await apiClient.get<void, DetailedJarResponse>(`v1/jars/${id}`);
+  static async getById(id: number, token: string) {
+    return await apiClient.get<void, DetailedJarResponse>(`v1/jars/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
   }
 
   static async update(id: number, dto: UpdateJarRequest) {
