@@ -61,6 +61,11 @@ export const JarPage = () => {
     onOpen: onOpenAddTransaction,
     onClose: onCloseAddTransaction,
   } = useDisclosure();
+  const {
+    isOpen: isOpenAddStore,
+    onOpen: onOpenAddStore,
+    onClose: onCloseAddStore,
+  } = useDisclosure();
 
   const orientation = useBreakpointValue<'column' | 'row'>({
     base: 'column',
@@ -146,10 +151,10 @@ export const JarPage = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpenAddStore} onClose={onCloseAddStore}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create jar</ModalHeader>
+          <ModalHeader>Create store</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <CreateStoreForm
@@ -164,7 +169,7 @@ export const JarPage = () => {
                 })
               }
               jarId={jar.id}
-              onClose={onClose}
+              onClose={onCloseAddStore}
             />
           </ModalBody>
         </ModalContent>
@@ -179,7 +184,7 @@ export const JarPage = () => {
               onTransactionCreated={handleTransactionCreated}
               storeBalance={activeStoreBalance}
               storeId={activeStoreId}
-              onClose={onClose}
+              onClose={onCloseAddTransaction}
             />
           </ModalBody>
         </ModalContent>
@@ -241,7 +246,7 @@ export const JarPage = () => {
                 <Heading fontSize="3xl" whiteSpace="nowrap">
                   Stores:
                 </Heading>
-                <Button colorScheme="orange" h="35px" onClick={onOpen}>
+                <Button colorScheme="orange" h="35px" onClick={onOpenAddStore}>
                   Add
                 </Button>
               </HStack>
@@ -269,7 +274,7 @@ export const JarPage = () => {
                     >
                       In/Out
                     </Button>
-                    <VStack align="start" p="2">
+                    <VStack align="start" pt="0.5rem">
                       {store.balances.map((currency) => (
                         <Tag
                           w="fit-content"
@@ -306,7 +311,7 @@ export const JarPage = () => {
                         <Tr
                           key={transaction.id}
                           color={
-                            transaction.type == TransactionType.Inflow
+                            transaction.type === TransactionType.Inflow
                               ? 'teal.300'
                               : 'red.300'
                           }
@@ -317,7 +322,7 @@ export const JarPage = () => {
                             maxW="24"
                             whiteSpace="nowrap"
                           >
-                            {transaction.type == TransactionType.Inflow
+                            {transaction.type === TransactionType.Inflow
                               ? '+'
                               : '-'}
                             {transaction.amount} {transaction.currency}
@@ -351,7 +356,7 @@ export const JarPage = () => {
                       {Array.from({ length: pages }).map((_, index) => (
                         <Button
                           key={index}
-                          variant={index + 1 == page ? 'solid' : 'outline'}
+                          variant={index + 1 === page ? 'solid' : 'outline'}
                           onClick={() => setPage(index + 1)}
                           maxW="10"
                         >
