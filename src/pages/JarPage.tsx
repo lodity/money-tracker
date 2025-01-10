@@ -35,6 +35,8 @@ import {
   Wrap,
 } from '@chakra-ui/react';
 import { JarInfo } from '../components/JarInfo';
+import CreateStoreForm from '../components/CreateStoreForm';
+import CreateTransactionForm from '../components/CreateTransactionForm';
 import JarForm from '../components/JarForm';
 import { useNavigate } from 'react-router';
 import { Transaction, TransactionType } from '../types/transaction';
@@ -46,10 +48,24 @@ export const JarPage = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
   const [jar, setJar] = useState<DetailedJar | null>(null);
+  const [activeStoreId, setActiveStoreId] = useState(0);
+  const [updateCounter, setUpdateCounter] = useState(0);
+  const [activeStoreBalance, setActiveStoreBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [pages, setPages] = useState<number>(1);
   const [page, setPage] = useState(1);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenAddTransaction,
+    onOpen: onOpenAddTransaction,
+    onClose: onCloseAddTransaction,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAddStore,
+    onOpen: onOpenAddStore,
+    onClose: onCloseAddStore,
+  } = useDisclosure();
 
   const orientation = useBreakpointValue<'column' | 'row'>({
     base: 'column',
@@ -63,8 +79,11 @@ export const JarPage = () => {
     lg: 'fit-content',
   });
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+
+  const handleTransactionCreated = () => {
+    setUpdateCounter((prev) => prev + 1);
+  };
 
   const handleDelete = () => {
     if (!id) {
@@ -95,7 +114,7 @@ export const JarPage = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [id, currentUser]);
+  }, [id, updateCounter, currentUser]);
 
   useEffect(() => {
     if (!id) {
@@ -132,9 +151,46 @@ export const JarPage = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isOpenAddStore} onClose={onCloseAddStore}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create store</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <CreateStoreForm
+              onStoreCreated={(newStore) =>
+                setJar((prev) => {
+                  if (!prev) return prev;
 
+                  return {
+                    ...prev,
+                    stores: [...prev.stores, { ...newStore, balances: [] }],
+                  };
+                })
+              }
+              jarId={jar.id}
+              onClose={onCloseAddStore}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isOpenAddTransaction} onClose={onCloseAddTransaction}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add transaction</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <CreateTransactionForm
+              onTransactionCreated={handleTransactionCreated}
+              storeBalance={activeStoreBalance}
+              storeId={activeStoreId}
+              onClose={onCloseAddTransaction}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <VStack
-        w="full"
+        w={'full'}
         align="start"
         gap="4"
         minW={minStackWidth}
@@ -186,9 +242,14 @@ export const JarPage = () => {
         <Flex flexDir={orientation} w="full" gap="4" minW="fit-content">
           <Card w="full">
             <CardBody>
-              <Heading fontSize="3xl" mb="4" whiteSpace="nowrap">
-                Stores:
-              </Heading>
+              <HStack mb="4" justifyContent="space-between">
+                <Heading fontSize="3xl" whiteSpace="nowrap">
+                  Stores:
+                </Heading>
+                <Button colorScheme="orange" h="35px" onClick={onOpenAddStore}>
+                  Add
+                </Button>
+              </HStack>
               <VStack align="start">
                 {jar.stores.map((store) => (
                   <Box key={store.id}>
@@ -198,7 +259,22 @@ export const JarPage = () => {
                         ({store.balance} {jar.targetCurrency})
                       </Text>
                     </Heading>
-                    <VStack align="start" p="2">
+                    <Button
+                      h="30px"
+                      onClick={() => {
+                        setActiveStoreId(store.id);
+                        setActiveStoreBalance(
+                          store.balances.reduce(
+                            (acc, curr) => acc + curr.balance,
+                            0,
+                          ),
+                        );
+                        onOpenAddTransaction();
+                      }}
+                    >
+                      In/Out
+                    </Button>
+                    <VStack align="start" pt="0.5rem">
                       {store.balances.map((currency) => (
                         <Tag
                           w="fit-content"
@@ -235,7 +311,7 @@ export const JarPage = () => {
                         <Tr
                           key={transaction.id}
                           color={
-                            transaction.type == TransactionType.Inflow
+                            transaction.type === TransactionType.Inflow
                               ? 'teal.300'
                               : 'red.300'
                           }
@@ -246,7 +322,7 @@ export const JarPage = () => {
                             maxW="24"
                             whiteSpace="nowrap"
                           >
-                            {transaction.type == TransactionType.Inflow
+                            {transaction.type === TransactionType.Inflow
                               ? '+'
                               : '-'}
                             {transaction.amount} {transaction.currency}
@@ -280,7 +356,7 @@ export const JarPage = () => {
                       {Array.from({ length: pages }).map((_, index) => (
                         <Button
                           key={index}
-                          variant={index + 1 == page ? 'solid' : 'outline'}
+                          variant={index + 1 === page ? 'solid' : 'outline'}
                           onClick={() => setPage(index + 1)}
                           maxW="10"
                         >

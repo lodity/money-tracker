@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 import BaseLayout from '../layout/BaseLayout';
 import React from 'react';
 import { JarListPage } from '../pages/JarListPage';
@@ -9,6 +9,10 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 import { JarPage } from '../pages/JarPage';
 
 export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Navigate to="/jars" replace />,
+  },
   {
     element: <BaseLayout />,
     children: [
