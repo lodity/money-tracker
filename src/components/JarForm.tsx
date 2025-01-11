@@ -12,6 +12,7 @@ import { CreateJarRequest } from '../types/api/jarApi';
 import SelectMenu from './UI/SelectMenu';
 import { DetailedJar, Jar } from '../types/jar';
 import { CurrencyApi } from '../api/currency';
+import { useAuth } from '../hooks/useAuth';
 
 interface JarFormProps {
   onCompleted: (jar: DetailedJar) => void;
@@ -30,6 +31,8 @@ const JarForm: FC<JarFormProps> = ({ onCompleted, onClose, editData }) => {
 
   const [options, setOptions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const { currentUser } = useAuth();
 
   const isNameError = jar.name.trim() === '';
   const isTargetError = jar.target <= 0 || Number.isNaN(jar.target);
@@ -58,8 +61,12 @@ const JarForm: FC<JarFormProps> = ({ onCompleted, onClose, editData }) => {
   const handleCreateJar = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!currentUser) {
+      return;
+    }
+
     try {
-      const res = await JarApi.create(jar);
+      const res = await JarApi.create(jar, currentUser.token);
       onCompleted(res.data.data);
       onClose();
     } catch (error) {
@@ -68,11 +75,11 @@ const JarForm: FC<JarFormProps> = ({ onCompleted, onClose, editData }) => {
   };
 
   const handleEditJar = async (e: React.FormEvent) => {
-    if (!editData) return;
+    if (!editData || !currentUser) return;
     e.preventDefault();
 
     try {
-      const res = await JarApi.update(editData.id, jar);
+      const res = await JarApi.update(editData.id, jar, currentUser.token);
       onCompleted(res.data.data);
       onClose();
     } catch (error) {
@@ -81,9 +88,11 @@ const JarForm: FC<JarFormProps> = ({ onCompleted, onClose, editData }) => {
   };
 
   useEffect(() => {
+    if (!currentUser) return;
+
     const fetchOptions = async () => {
       try {
-        const response = await CurrencyApi.getAll();
+        const response = await CurrencyApi.getAll(currentUser.token);
         setOptions(response.data.data.map((option) => option.name));
       } catch (e) {
         console.error(e);
@@ -92,7 +101,7 @@ const JarForm: FC<JarFormProps> = ({ onCompleted, onClose, editData }) => {
     };
 
     fetchOptions();
-  }, []);
+  }, [currentUser]);
 
   useEffect(() => {
     if (!editData) return;

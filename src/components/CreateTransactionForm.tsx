@@ -13,6 +13,7 @@ import SelectMenu from './UI/SelectMenu';
 import { CreateTransaction } from '../types/api/transactionApi';
 import { Transaction, TransactionType } from '../types/transaction';
 import { TransactionApi } from '../api/transaction';
+import { useAuth } from '../hooks/useAuth';
 
 interface CreateTransactionFormProps {
   onTransactionCreated: (transaction: Transaction) => void;
@@ -40,6 +41,8 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
 
   const [options, setOptions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const { currentUser } = useAuth();
 
   const isAmountError =
     createTransaction.amount <= 0 ||
@@ -72,6 +75,11 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
     transactionType: TransactionType,
   ) => {
     e.preventDefault();
+
+    if (!currentUser) {
+      return;
+    }
+
     const newTransaction: CreateTransaction = {
       ...createTransaction,
       type: transactionType,
@@ -86,7 +94,10 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
     }
 
     try {
-      const res = await TransactionApi.create(newTransaction);
+      const res = await TransactionApi.create(
+        newTransaction,
+        currentUser.token,
+      );
       onTransactionCreated(res.data.data);
       onClose();
     } catch (error) {
@@ -95,9 +106,13 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
   };
 
   useEffect(() => {
+    if (!currentUser) {
+      return;
+    }
+
     const fetchOptions = async () => {
       try {
-        const response = await CurrencyApi.getAll();
+        const response = await CurrencyApi.getAll(currentUser.token);
         setOptions(response.data.data.map((option) => option.name));
       } catch (e) {
         console.error(e);
@@ -106,7 +121,7 @@ const CreateTransactionForm: FC<CreateTransactionFormProps> = ({
     };
 
     fetchOptions();
-  }, []);
+  }, [currentUser]);
 
   return (
     <form>

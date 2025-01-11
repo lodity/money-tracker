@@ -86,11 +86,11 @@ export const JarPage = () => {
   };
 
   const handleDelete = () => {
-    if (!id) {
+    if (!id || !currentUser) {
       return;
     }
 
-    JarApi.delete(Number(id))
+    JarApi.delete(Number(id), currentUser.token)
       .then(() => {
         navigate('/jars');
       })
@@ -117,15 +117,17 @@ export const JarPage = () => {
   }, [id, updateCounter, currentUser]);
 
   useEffect(() => {
-    if (!id) {
+    if (!id || !currentUser) {
       return;
     }
 
-    TransactionApi.get(10, (page - 1) * 10, Number(id)).then((response) => {
-      setTransactions(response.data.data.transactions);
-      setPages(response.data.data.totalPages);
-    });
-  }, [id, page]);
+    TransactionApi.get(10, (page - 1) * 10, currentUser.token, Number(id)).then(
+      (response) => {
+        setTransactions(response.data.data.transactions);
+        setPages(response.data.data.totalPages);
+      },
+    );
+  }, [id, page, currentUser]);
 
   if (isLoading || !jar) {
     return (
